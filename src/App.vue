@@ -6,7 +6,21 @@
 
 <script lang="ts">
 import Vue from "vue";
-export default Vue.extend({});
+import firebase from "@/firebaseConfig";
+let auth = firebase.auth;
+
+export default Vue.extend({
+  async beforeCreate() {
+    await auth.onAuthStateChanged(async user => {
+      if (user) {
+        console.log("TCL: created -> user", user);
+        await this.$store.dispatch("getAndSetUserData").catch(err => {
+          alert("There was a problem getting your data");
+        });
+      }
+    });
+  }
+});
 </script>
 
 

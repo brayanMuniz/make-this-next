@@ -46,6 +46,9 @@ export const mutations: MutationTree<userState> = {
     userAuthLoaded(state, payload: userAuth) {
         state.userAuth = payload;
     },
+    userDataLoaded(state, payload: any) {
+        state.token = payload.token
+    },
     clearUserData(state) {
         state.userAuth = undefined;
     }
@@ -53,14 +56,16 @@ export const mutations: MutationTree<userState> = {
 
 export const actions: ActionTree<userState, any> = {
     // **** Making the user
-    async oauthWithGitHub({ dispatch }) {
+    async oauthWithGitHub({ dispatch, commit }) {
         let githubProvider = new firebaseRef.firebaseRef.auth.GithubAuthProvider();
         githubProvider.addScope('public_repo, read:org, read:user, read:packages'); // reads only
         auth.signInWithPopup(githubProvider)
             .then(async (result: any) => {
                 if (result === null || result === undefined) return 'result is null' // Todo: would need to configure something
                 var token = result.credential.accessToken;
-                await dispatch('addGitHubTokenFB', token)
+                await dispatch('addGitHubTokenFB', token).then(() => {
+                    commit('userDataLoaded', token)
+                })
             }).catch(error => {
                 console.log(error.code)
                 console.log(error.message)
@@ -72,6 +77,15 @@ export const actions: ActionTree<userState, any> = {
         return await db.collection('Users').doc(auth.currentUser.uid).update({
             token: newToken
         });
+    },
+    async getAndSetUserData({ commit }) {
+        if (auth.currentUser === null || auth.currentUser === undefined) return Promise.reject('User not authorized')
+        console.log('Getting User data....')
+        let userData = await db.collection('Users').doc(auth.currentUser.uid).get()
+        // Todo: if user Data is undefined return null or something 
+        commit('userDataLoaded', userData.data());
+        console.log('Commited userData')
+        return userData.data();
     },
     async githubSignout() {
         auth.signOut().then(() => {

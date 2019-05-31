@@ -16,7 +16,7 @@
               Start Bootstrap can help you build better websites using the
               Bootstrap framework! Just download a theme and start customizing, no strings attached!
             </p>
-            <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Sign Up With Github</a>
+            <button @click="signUpWithGithub" class="btn btn-primary btn-xl">Sign Up With Github</button>
           </div>
         </div>
       </div>
@@ -27,9 +27,22 @@
 <script lang="ts">
 import Vue from "vue";
 import navbar from "./navbar.vue";
+import store from "@/store";
 export default Vue.extend({
   components: {
     navbar
+  },
+  methods: {
+    signUpWithGithub() {
+      store
+        .dispatch("oauthWithGitHub")
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   }
 });
 </script>

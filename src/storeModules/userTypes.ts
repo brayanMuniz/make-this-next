@@ -2,6 +2,7 @@ export interface userAuth {
     userName: string;
     profileImgLink?: URL;
     dateCreated: Date;
+    // add more optional types 
 }
 
 export interface userState {
