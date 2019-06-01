@@ -2,7 +2,7 @@ import { Module } from 'vuex';
 import { ActionTree } from 'vuex';
 import { GetterTree } from 'vuex';
 import { MutationTree } from 'vuex';
-import { userState, userAuth, simpleUserData } from './userTypes';
+import { userState, userAuth } from './userTypes';
 
 import firebase from '@/firebaseConfig'
 let auth = firebase.auth;
@@ -19,22 +19,9 @@ export const getters: GetterTree<userState, any> = {
         if (state.userAuth === undefined) return {}
         return state.userAuth
     },
-    getSimpleUserData(state): object {
-        if (state.userAuth === undefined || auth.currentUser === null) return {}
-        let mySimpleUserData: simpleUserData = {
-            userName: state.userAuth.userName,
-            dateCreated: state.userAuth.dateCreated,
-            userUID: auth.currentUser.uid
-        }
-        return mySimpleUserData
-    },
     getUserGitHubToken(state): string {
-
+        if (state.token.length > 1) return state.token
         return ''
-    },
-    userHasData(state): boolean {
-        if (state.userAuth === undefined) return false
-        return true
     },
     isUserSignedIn: (): boolean => {
         if (auth === undefined || auth === null) return false
@@ -43,7 +30,7 @@ export const getters: GetterTree<userState, any> = {
 };
 
 export const mutations: MutationTree<userState> = {
-    userAuthLoaded(state, payload: userAuth) {
+    updateAuthData(state, payload: userAuth) {
         state.userAuth = payload;
     },
     userDataLoaded(state, payload: any) {
