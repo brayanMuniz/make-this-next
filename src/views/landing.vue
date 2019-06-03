@@ -7,24 +7,22 @@
 
 <script lang="ts">
 import Vue from "vue";
-import landingPage from "@/components/landingPage.vue";
-import landingAuth from "@/components/landingAuth.vue";
 import store from "@/store";
+import firebase from "@/firebaseConfig";
 export default Vue.extend({
   name: "home",
   components: {
-    "landing-page": landingPage,
-    "landing-auth": landingAuth
+    "landing-page": () => import("@/components/landingPage.vue"),
+    "landing-auth": () => import("@/components/landingAuth.vue")
+  },
+  props: {
+    userSignedIn: Boolean
   },
   data() {
     return {};
   },
   computed: {
-    userSignedIn() {
-      return store.getters.isUserSignedIn;
-    },
     userName() {
-      console.log(store.getters.getUserData);
       return store.getters.getUserData.displayName;
     }
   }

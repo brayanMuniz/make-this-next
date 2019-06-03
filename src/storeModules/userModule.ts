@@ -5,9 +5,9 @@ import { MutationTree } from 'vuex';
 import { userState, userAuth } from './userTypes';
 
 import firebase from '@/firebaseConfig'
-let auth = firebase.auth;
-let db = firebase.database
-let firebaseRef = firebase
+let auth = firebase.firebase.auth();
+let db = firebase.firebase.firestore()
+let firebaseRef = firebase.firebase
 
 export const state: userState = {
     userAuth: undefined,
@@ -23,9 +23,12 @@ export const getters: GetterTree<userState, any> = {
         if (state.token.length > 1) return state.token
         return ''
     },
-    isUserSignedIn: (): boolean => {
-        if (auth === undefined || auth === null) return false
-        return true;
+    isUserSignedIn: () => {
+        if (auth.currentUser) {
+            return true;
+        } else {
+            return false;
+        }
     },
 };
 
@@ -44,7 +47,7 @@ export const mutations: MutationTree<userState> = {
 export const actions: ActionTree<userState, any> = {
     // **** Making the user
     async oauthWithGitHub({ dispatch, commit }) {
-        let githubProvider = new firebaseRef.firebaseRef.auth.GithubAuthProvider();
+        let githubProvider = new firebaseRef.auth.GithubAuthProvider();
         githubProvider.addScope('public_repo, read:org, read:user, read:packages'); // reads only
         auth.signInWithPopup(githubProvider)
             .then(async (result: any) => {

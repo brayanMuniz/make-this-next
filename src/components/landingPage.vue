@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navbar/>
+    <nav-bar :userSignedIn="false"></nav-bar>
     <!-- Masthead -->
     <header class="masthead">
       <div class="container h-100">
@@ -26,11 +26,11 @@
 
 <script lang="ts">
 import Vue from "vue";
-import navbar from "./navbar.vue";
+import nav from "@/components/navbar.vue";
 import store from "@/store";
 export default Vue.extend({
   components: {
-    navbar
+    "nav-bar": nav
   },
   methods: {
     signUpWithGithub() {
