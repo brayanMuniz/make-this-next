@@ -1,58 +1,68 @@
 <template>
   <div class="wrapper">
     <nav id="sidebar">
-      <div class="sidebar-header">
-        <h3>Bootstrap Sidebar</h3>
+      <div class="sticky-top">
+        <div class="sidebar-header">
+          <h3>Bootstrap Sidebar</h3>
+        </div>
+
+        <ul class="list-unstyled components">
+          <!-- Todo: make font bigger and have a seperator  -->
+          <p>Filters</p>
+          <!-- I think it does not work because the bootstrap js is not imported -->
+          <li class="active">
+            <a
+              href="#homeSubmenu"
+              data-toggle="collapse"
+              aria-expanded="false"
+              class="dropdown-toggle"
+            >Home</a>
+            <ul class="collapse list-unstyled" id="homeSubmenu">
+              <li>
+                <a href="#">Home 1</a>
+              </li>
+              <li>
+                <a href="#">Home 2</a>
+              </li>
+              <li>
+                <a href="#">Home 3</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#">About</a>
+          </li>
+        </ul>
+
+        <ul class="list-unstyled CTAs">
+          <li>
+            <a class="download">Other Filters</a>
+          </li>
+          <li>
+            <a class="article">Other</a>
+          </li>
+        </ul>
       </div>
-
-      <ul class="list-unstyled components">
-        <p>Dummy Heading</p>
-        <!-- I think it does not work because the bootstrap js is not importe -->
-        <li class="active">
-          <a
-            href="#homeSubmenu"
-            data-toggle="collapse"
-            aria-expanded="false"
-            class="dropdown-toggle"
-          >Home</a>
-          <ul class="collapse list-unstyled" id="homeSubmenu">
-            <li>
-              <a href="#">Home 1</a>
-            </li>
-            <li>
-              <a href="#">Home 2</a>
-            </li>
-            <li>
-              <a href="#">Home 3</a>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <a href="#">About</a>
-        </li>
-      </ul>
-
-      <ul class="list-unstyled CTAs">
-        <li>
-          <a class="download">Other Filters</a>
-        </li>
-        <li>
-          <a class="article">Other</a>
-        </li>
-      </ul>
     </nav>
 
     <div id="content">
+      <!-- Todo: will have to make this a sticky top navbar 
+      on mobile it will be too annoying to go all the way to the top-->
       <!-- Top Navigation Bar -->
-      <nav-bar :userSignedIn="true"></nav-bar>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-          <button type="button" id="sidebarCollapse" class="btn btn-info">
-            <i class="fas fa-align-left"></i>
-            <span>Toggle Filters</span>
-          </button>
-        </div>
-      </nav>
+      <div class="sticky-top">
+        <nav-bar :userSignedIn="true"></nav-bar>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <div class="container-fluid">
+            <button type="button" id="sidebarCollapse" class="btn btn-info">
+              <i class="fas fa-align-left"></i>
+              <span>Toggle Filters</span>
+              <!-- Todo: have a search bar on the right side of this  -->
+              <!-- Todo: have a button right here to want to find by primary language -->
+            </button>
+          </div>
+        </nav>
+      </div>
+      <card-columns :cardsData="td.testData.data.search.edges"></card-columns>
       <custom-footer></custom-footer>
     </div>
   </div>
@@ -62,8 +72,10 @@
 import Vue from "vue";
 import nav from "@/components/navbar.vue";
 import footer from "@/components/footer.vue";
+import cardColumnsVue from "@/components/cardColumns.vue";
 import $ from "jquery";
 import bootstrap from "bootstrap";
+import td from "@/components/testData.ts";
 $(document).ready(function() {
   $("#sidebarCollapse").on("click", function() {
     $("#sidebar").toggleClass("active");
@@ -72,17 +84,43 @@ $(document).ready(function() {
 export default Vue.extend({
   components: {
     "nav-bar": nav,
+    "card-columns": cardColumnsVue,
     "custom-footer": footer
+  },
+  data() {
+    return {
+      td: td
+    };
   }
 });
 </script>
+
 <style lang='scss' scoped>
+@import "../scss/creative.scss";
+
 a,
 a:hover,
 a:focus {
   color: inherit;
   text-decoration: none;
   transition: all 0.3s;
+}
+
+.btn-info {
+  background-color: $primary;
+  border-color: $primary;
+}
+
+.btn-info[data-v-3315e6ff]:hover {
+  background-color: darken($primary, 5%);
+  border-color: darken($primary, 5%);
+  color: #fff;
+}
+
+.btn-info[data-v-3315e6ff]:active {
+  background-color: darken($primary, 5%);
+  border-color: darken($primary, 5%);
+  color: #fff;
 }
 
 .wrapper {
@@ -94,7 +132,7 @@ a:focus {
 #sidebar {
   min-width: 250px;
   max-width: 250px;
-  background: #7386d5;
+  background: $primary;
   color: #fff;
   transition: all 0.3s;
 }
@@ -105,12 +143,12 @@ a:focus {
 
 #sidebar .sidebar-header {
   padding: 20px;
-  background: #6d7fcc;
+  background: $primary;
 }
 
 #sidebar ul.components {
   padding: 20px 0;
-  border-bottom: 1px solid #47748b;
+  border-bottom: 1px solid $primary;
 }
 
 #sidebar ul p {
@@ -125,14 +163,14 @@ a:focus {
 }
 
 #sidebar ul li a:hover {
-  color: #7386d5;
+  color: $primary;
   background: #fff;
 }
 
 #sidebar ul li.active > a,
 a[aria-expanded="true"] {
   color: #fff;
-  background: #6d7fcc;
+  background: $primary;
 }
 
 a[data-toggle="collapse"] {
@@ -165,14 +203,9 @@ ul.CTAs a {
   margin-bottom: 5px;
 }
 
-a.download {
-  background: #fff;
-  color: #7386d5;
-}
-
 a.article,
 a.article:hover {
-  background: #6d7fcc !important;
+  background: $primary !important;
   color: #fff !important;
 }
 
@@ -196,7 +229,7 @@ a.article:hover {
     width: 40px;
     height: 40px;
     // Todo: change this to primary color from imported vars
-    background: #f5f5f5;
+    background: $primary;
     cursor: pointer;
   }
 
