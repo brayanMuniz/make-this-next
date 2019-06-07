@@ -25,10 +25,11 @@ import Vue from "vue";
 import moment from "moment";
 export default Vue.extend({
   props: {
-    cardsData: Array
+    cardsData: Array,
+    filters: Object
   },
   methods: {
-    toMomentTime(time) {
+    toMomentTime(time: Date): string {
       return moment(time).format("MM-DD-YYYY");
     }
   }

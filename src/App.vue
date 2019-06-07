@@ -8,6 +8,7 @@
 import Vue from "vue";
 import store from "@/store";
 import firebase from "@/firebaseConfig";
+import bootstrap from "bootstrap";
 export default Vue.extend({
   data() {
     return {

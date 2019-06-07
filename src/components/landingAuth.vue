@@ -3,12 +3,11 @@
     <nav id="sidebar">
       <div class="sticky-top">
         <div class="sidebar-header">
-          <h3>Bootstrap Sidebar</h3>
+          <h3>Filters</h3>
         </div>
 
         <ul class="list-unstyled components">
           <!-- Todo: make font bigger and have a seperator  -->
-          <p>Filters</p>
           <!-- I think it does not work because the bootstrap js is not imported -->
           <li class="active">
             <a
@@ -20,12 +19,6 @@
             <ul class="collapse list-unstyled" id="homeSubmenu">
               <li>
                 <a href="#">Home 1</a>
-              </li>
-              <li>
-                <a href="#">Home 2</a>
-              </li>
-              <li>
-                <a href="#">Home 3</a>
               </li>
             </ul>
           </li>
@@ -53,7 +46,7 @@
         <nav-bar :userSignedIn="true"></nav-bar>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
           <div class="container-fluid">
-            <button type="button" id="sidebarCollapse" class="btn btn-info">
+            <button type="button" id="sidebarCollapse" class="btn btn-primary">
               <i class="fas fa-align-left"></i>
               <span>Toggle Filters</span>
               <!-- Todo: have a search bar on the right side of this  -->
@@ -104,23 +97,6 @@ a:focus {
   color: inherit;
   text-decoration: none;
   transition: all 0.3s;
-}
-
-.btn-info {
-  background-color: $primary;
-  border-color: $primary;
-}
-
-.btn-info[data-v-3315e6ff]:hover {
-  background-color: darken($primary, 5%);
-  border-color: darken($primary, 5%);
-  color: #fff;
-}
-
-.btn-info[data-v-3315e6ff]:active {
-  background-color: darken($primary, 5%);
-  border-color: darken($primary, 5%);
-  color: #fff;
 }
 
 .wrapper {
