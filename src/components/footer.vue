@@ -1,6 +1,6 @@
 <template>
   <!-- Footer -->
-  <footer class="bg-light py-5">
+  <footer class="bg-light py-2">
     <div class="container">
       <div class="text-center text-muted">
         Made by
