@@ -6,9 +6,10 @@
       <div class="card-body">
         <h5 class="card-title">
           <!-- Add the # of forks and stars it has on the sides  -->
-          <a :href="edge.node.homepageUrl">K</a>
+          <!-- <a :href="edge.node.homepageUrl">K</a> -->
           <a :href="edge.node.url">{{edge.node.name}}</a>
         </h5>
+        <!-- Add a ... if the text is too long. Aroung > 200 charactesrs -->
         <p class="card-text">{{edge.node.description}}</p>
         <!-- Instead of all the pills have the icons displayed with an @click being able to add it to the filters -->
         <!-- Todo: have pills on the right side with first 5 languages. Try to figure out a way to minimize them like javascript => JS  -->

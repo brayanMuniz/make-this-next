@@ -49,13 +49,33 @@
             <button type="button" id="sidebarCollapse" class="btn btn-primary">
               <i class="fas fa-align-left"></i>
               <span>Toggle Filters</span>
-              <!-- Todo: have a search bar on the right side of this  -->
-              <!-- Todo: have a button right here to want to find by primary language -->
             </button>
+            <form @submit.prevent="startRepoQuery(repoQuery)">
+              <div class="form-group">
+                <div class="input-group-sm ml-0">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Repo Name"
+                    aria-label="Recipient's username"
+                    aria-describedby="basic-addon2"
+                    v-model.trim="repoQuery"
+                  >
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            <!-- Todo: have a button right here to want to find by primary language -->
           </div>
         </nav>
       </div>
-      <card-columns :cardsData="td.testData.data.search.edges"></card-columns>
+      <!-- Todo: configure the location of the spinner  -->
+      <div class="d-flex justify-content-center" v-if="loading">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <card-columns :cardsData="repoResults" v-else></card-columns>
       <custom-footer></custom-footer>
     </div>
   </div>
@@ -64,14 +84,15 @@
 <script lang="ts">
 import Vue from "vue";
 import store from "@/store";
-import axios from "axios";
+import { execute, makePromise } from "apollo-link";
+import { HttpLink } from "apollo-link-http";
+import gql from "graphql-tag";
 
 import nav from "@/components/navbar.vue";
 import footer from "@/components/footer.vue";
 import cardColumnsVue from "@/components/cardColumns.vue";
 
 import $ from "jquery";
-import td from "@/components/testData.ts";
 
 $(document).ready(function() {
   $("#sidebarCollapse").on("click", function() {
@@ -87,26 +108,98 @@ export default Vue.extend({
   },
   data() {
     return {
-      td: td
+      repoQuery: "",
+      repoResults: [],
+      loading: false
     };
   },
   async created() {
-    await axios
-      .get("https://api.github.com/graphql", {
+    if (store.getters.getUserGitHubToken.length != 0) {
+      this.startRepoQuery(this.repoQuery);
+    }
+  },
+  methods: {
+    // Todo: move this operation into github module
+    changeCardsData(newCardsData: []) {
+      this.repoResults = newCardsData;
+    },
+    async startRepoQuery(searchQuery: string) {
+      console.log("TCL: startRepoQuery -> searchQuery", searchQuery);
+      this.loading = true;
+      const uri = "https://api.github.com/graphql";
+      const link = new HttpLink({
+        uri,
         headers: {
-          Authorization: "Bearer ".concat(store.getters.getUserGitHubToken),
-          "Content-type": "application/graphql"
-        },
-        data: {
-          query: ``
+          Authorization: "Bearer ".concat(store.getters.getUserGitHubToken)
         }
-      })
-      .then(githubResult => {
-        console.log("TCL: created -> githubResult", githubResult);
-      })
-      .catch(err => {
-        console.log(err);
       });
+      // Todo: break down the operation into fragments
+      const operation = {
+        query: gql`
+          query($querySearch: String!) {
+            search(query: $querySearch, type: REPOSITORY, first: 20) {
+              edges {
+                node {
+                  ... on Repository {
+                    name
+                    collaborators(first: 4) {
+                      edges {
+                        node {
+                          name
+                          avatarUrl
+                        }
+                      }
+                    }
+                    id
+                    forkCount
+                    isFork
+                    stargazers(first: 5) {
+                      nodes {
+                        avatarUrl
+                        url
+                        websiteUrl
+                        name
+                      }
+                    }
+                    nameWithOwner
+                    url
+                    createdAt
+                    description
+                    homepageUrl
+                    forkCount
+                    primaryLanguage {
+                      name
+                      id
+                    }
+                    languages(first: 5) {
+                      nodes {
+                        name
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          querySearch: searchQuery
+        }
+      };
+      await makePromise(execute(link, operation))
+        .then(data => {
+          this.loading = false;
+          if (data.data === undefined || data.data == null) {
+            alert("There was an err");
+          } else {
+            this.changeCardsData(data.data.search.edges);
+          }
+        })
+        .catch(error => {
+          this.loading = false;
+          console.log(`received error ${error}`);
+        });
+    }
   }
 });
 </script>
