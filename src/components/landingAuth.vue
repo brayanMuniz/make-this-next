@@ -7,8 +7,8 @@
         </div>
 
         <ul class="list-unstyled components">
-          <!-- Todo: make font bigger and have a seperator  -->
-          <!-- I think it does not work because the bootstrap js is not imported -->
+          <!-- I think it does not work because the bootstrap js is not imported 
+          but if I import it it breaks the css-->
           <li class="active">
             <a
               href="#homeSubmenu"
@@ -22,6 +22,7 @@
               </li>
             </ul>
           </li>
+          <!-- Members  -->
           <li>
             <a href="#">About</a>
           </li>
@@ -75,7 +76,7 @@
           <span class="sr-only">Loading...</span>
         </div>
       </div>
-      <card-columns :cardsData="repoResults" v-else></card-columns>
+      <card-columns :cardsData="repoResults" :filters="queryFilters" v-else></card-columns>
       <custom-footer></custom-footer>
     </div>
   </div>
@@ -110,7 +111,8 @@ export default Vue.extend({
     return {
       repoQuery: "",
       repoResults: [],
-      loading: false
+      loading: false,
+      queryFilters: {}
     };
   },
   async created() {
@@ -124,69 +126,9 @@ export default Vue.extend({
       this.repoResults = newCardsData;
     },
     async startRepoQuery(searchQuery: string) {
-      console.log("TCL: startRepoQuery -> searchQuery", searchQuery);
       this.loading = true;
-      const uri = "https://api.github.com/graphql";
-      const link = new HttpLink({
-        uri,
-        headers: {
-          Authorization: "Bearer ".concat(store.getters.getUserGitHubToken)
-        }
-      });
-      // Todo: break down the operation into fragments
-      const operation = {
-        query: gql`
-          query($querySearch: String!) {
-            search(query: $querySearch, type: REPOSITORY, first: 20) {
-              edges {
-                node {
-                  ... on Repository {
-                    name
-                    collaborators(first: 4) {
-                      edges {
-                        node {
-                          name
-                          avatarUrl
-                        }
-                      }
-                    }
-                    id
-                    forkCount
-                    isFork
-                    stargazers(first: 5) {
-                      nodes {
-                        avatarUrl
-                        url
-                        websiteUrl
-                        name
-                      }
-                    }
-                    nameWithOwner
-                    url
-                    createdAt
-                    description
-                    homepageUrl
-                    forkCount
-                    primaryLanguage {
-                      name
-                      id
-                    }
-                    languages(first: 5) {
-                      nodes {
-                        name
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        `,
-        variables: {
-          querySearch: searchQuery
-        }
-      };
-      await makePromise(execute(link, operation))
+      store
+        .dispatch("repoQueryRequest", searchQuery)
         .then(data => {
           this.loading = false;
           if (data.data === undefined || data.data == null) {

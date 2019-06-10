@@ -1,6 +1,7 @@
 <template>
   <div class="card-columns">
     <!-- Todo: have an a tag around ll of this wiht the url emebded in there as a router link || send directly to github page  -->
+    <!-- Todo: make the card a type in typescript  -->
     <div class="card" v-for="edge in cardsData" :key="edge.node.id">
       <!-- <img src="..." class="card-img-top" alt="..."> -->
       <div class="card-body">
@@ -32,6 +33,11 @@ export default Vue.extend({
   methods: {
     toMomentTime(time: Date): string {
       return moment(time).format("MM-DD-YYYY");
+    },
+    cardhasAllFilters(cardEdge: any) {
+      // get the filters and sort through all of them.
+      
+      // this.filters
     }
   }
 });

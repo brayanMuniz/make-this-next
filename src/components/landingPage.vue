@@ -1,5 +1,5 @@
 <template>
-  <div class>
+  <div>
     <nav-bar :userSignedIn="false"></nav-bar>
     <!-- Masthead -->
     <header class="masthead">
