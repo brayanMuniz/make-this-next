@@ -27,21 +27,10 @@
             <a href="#">About</a>
           </li>
         </ul>
-
-        <ul class="list-unstyled CTAs">
-          <li>
-            <a class="download">Other Filters</a>
-          </li>
-          <li>
-            <a class="article">Other</a>
-          </li>
-        </ul>
       </div>
     </nav>
 
     <div id="content">
-      <!-- Todo: will have to make this a sticky top navbar 
-      on mobile it will be too annoying to go all the way to the top-->
       <!-- Top Navigation Bar -->
       <div class="sticky-top">
         <nav-bar :userSignedIn="true"></nav-bar>
@@ -49,7 +38,7 @@
           <div class="container-fluid">
             <button type="button" id="sidebarCollapse" class="btn btn-primary">
               <i class="fas fa-align-left"></i>
-              <span>Toggle Filters</span>
+              <font-awesome-icon icon="user-secret"/>
             </button>
             <form @submit.prevent="startRepoQuery(repoQuery)">
               <div class="form-group">
@@ -85,16 +74,12 @@
 <script lang="ts">
 import Vue from "vue";
 import store from "@/store";
-import { execute, makePromise } from "apollo-link";
-import { HttpLink } from "apollo-link-http";
-import gql from "graphql-tag";
 
 import nav from "@/components/navbar.vue";
 import footer from "@/components/footer.vue";
 import cardColumnsVue from "@/components/cardColumns.vue";
 
 import $ from "jquery";
-
 $(document).ready(function() {
   $("#sidebarCollapse").on("click", function() {
     $("#sidebar").toggleClass("active");
@@ -127,7 +112,7 @@ export default Vue.extend({
     },
     async startRepoQuery(searchQuery: string) {
       this.loading = true;
-      store
+      await store
         .dispatch("repoQueryRequest", searchQuery)
         .then(data => {
           this.loading = false;
