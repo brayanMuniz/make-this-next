@@ -72,19 +72,15 @@ a[data-toggle="collapse"] {
 ul ul a {
 	font-size: 0.9em !important;
 	padding-left: 30px !important;
-	background: #6d7fcc;
+	// ? cant decide to change this to primary or secondary
+	background: $primary;
 }
 
-ul.CTAs {
-	padding: 20px;
-}
-
-ul.CTAs a {
-	text-align: center;
+li ul li {
 	font-size: 0.9em !important;
-	display: block;
-	border-radius: 5px;
-	margin-bottom: 5px;
+	padding-left: 30px !important;
+	// ? cant decide to change this to primary or secondary
+	background: $primary;
 }
 
 a.article,

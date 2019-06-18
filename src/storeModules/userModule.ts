@@ -20,7 +20,7 @@ export const getters: GetterTree<userState, any> = {
         return state.userAuth
     },
     getUserGitHubToken(state): string {
-        if (state.token.length > 1) return state.token
+        if (state.token) return state.token
         return ''
     },
     isUserSignedIn: () => {
@@ -57,6 +57,7 @@ export const actions: ActionTree<userState, any> = {
                     commit('userDataLoaded', token)
                 })
             }).catch(error => {
+                alert('Could not Sign You in')
                 console.log(error.code)
                 console.log(error.message)
             });

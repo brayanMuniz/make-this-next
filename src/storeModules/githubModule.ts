@@ -9,14 +9,14 @@ import { HttpLink } from "apollo-link-http";
 import gql from "graphql-tag";
 
 export const state: gitHubState = {
-    token: '',
-    endPoint: 'https://api.github.com/graphql'
+  token: '',
+  endPoint: 'https://api.github.com/graphql'
 };
 
 export const getters: GetterTree<gitHubState, any> = {
-    getEndPoint(state): string {
-        return state.endPoint
-    },
+  getEndPoint(state): string {
+    return state.endPoint
+  },
 };
 
 export const mutations: MutationTree<gitHubState> = {
@@ -24,16 +24,16 @@ export const mutations: MutationTree<gitHubState> = {
 };
 
 export const actions: ActionTree<gitHubState, any> = {
-    async repoQueryRequest({ getters }, searchQuery: string) {
-        const uri = "https://api.github.com/graphql";
-        const link = new HttpLink({
-            uri,
-            headers: {
-                Authorization: "Bearer ".concat(getters.getUserGitHubToken)
-            }
-        });
-        const operation = {
-            query: gql`
+  async repoQueryRequest({ getters }, searchQuery: string) {
+    const uri = "https://api.github.com/graphql";
+    const link = new HttpLink({
+      uri,
+      headers: {
+        Authorization: "Bearer ".concat(getters.getUserGitHubToken)
+      }
+    });
+    const operation = {
+      query: gql`
             query($querySearch: String!) {
               search(query: $querySearch, type: REPOSITORY, first: 20) {
                 edges {
@@ -80,13 +80,13 @@ export const actions: ActionTree<gitHubState, any> = {
               }
             }
           `,
-            variables: {
-                querySearch: searchQuery
-            }
-        };
-        return await makePromise(execute(link, operation))
-    }
+      variables: {
+        querySearch: searchQuery
+      }
+    };
+    return await makePromise(execute(link, operation))
+  }
 };
 export const githubModule: Module<gitHubState, any> = {
-    state, getters, mutations, actions
+  state, getters, mutations, actions
 }
