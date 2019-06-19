@@ -24,7 +24,11 @@ export const mutations: MutationTree<gitHubState> = {
 };
 
 export const actions: ActionTree<gitHubState, any> = {
-  async repoQueryRequest({ getters }, searchQuery: string) {
+  async repoQueryRequest({ getters }, payload: any) {
+    if (payload.searchQuery == null) {
+      alert('Type in a valid Search')
+      return Promise.reject('Search Query Missing')
+    }
     const uri = "https://api.github.com/graphql";
     const link = new HttpLink({
       uri,
@@ -32,11 +36,13 @@ export const actions: ActionTree<gitHubState, any> = {
         Authorization: "Bearer ".concat(getters.getUserGitHubToken)
       }
     });
+    // split this up into somewhere for DRY
     const operation = {
       query: gql`
-            query($querySearch: String!) {
-              search(query: $querySearch, type: REPOSITORY, first: 20) {
+            query($querySearch: String!, $afterCursor: String) {
+              search(query: $querySearch, after: $afterCursor, type: REPOSITORY, first: 20) {
                 edges {
+                  cursor
                   node {
                     ... on Repository {
                       name
@@ -81,11 +87,12 @@ export const actions: ActionTree<gitHubState, any> = {
             }
           `,
       variables: {
-        querySearch: searchQuery
+        querySearch: payload.searchQuery,
+        afterCursor: payload.cursor,
       }
     };
     return await makePromise(execute(link, operation))
-  }
+  },
 };
 export const githubModule: Module<gitHubState, any> = {
   state, getters, mutations, actions

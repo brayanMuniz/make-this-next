@@ -7,18 +7,18 @@
         </div>
 
         <ul class="list-unstyled components">
-          <!-- I think it does not work because the bootstrap js is not imported 
-          but if I import it it breaks the css-->
           <li class="active">
             <a
-              href="#homeSubmenu"
+              href="#languagesSub"
               data-toggle="collapse"
               aria-expanded="false"
               class="dropdown-toggle"
-            >Home</a>
-            <ul class="collapse list-unstyled" id="homeSubmenu">
-              <li>
-                <a href="#">Home 1</a>
+            >Languages</a>
+            <ul class="collapse list-unstyled" id="languagesSub">
+              <!-- Todo: Divide these by the c languages, scripting languages etx -->
+              <li v-for="language in languages" :key="language">
+                <input type="checkbox" :value="language" v-model="queryFilters.languages">
+                <label :for="language">{{language}}</label>
               </li>
             </ul>
           </li>
@@ -31,14 +31,13 @@
     </nav>
 
     <div id="content">
-      <!-- Top Navigation Bar -->
       <div class="sticky-top">
         <nav-bar :userSignedIn="true"></nav-bar>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
           <div class="container-fluid">
             <button type="button" id="sidebarCollapse" class="btn btn-primary">
               <i class="fas fa-align-left"></i>
-              <font-awesome-icon icon="user-secret"/>
+              <font-awesome-icon icon="filter"/>
             </button>
             <form @submit.prevent="startRepoQuery(repoQuery)">
               <div class="form-group">
@@ -65,7 +64,7 @@
           <span class="sr-only">Loading...</span>
         </div>
       </div>
-      <card-columns :cardsData="repoResults" :filters="queryFilters" v-else></card-columns>
+      <card-columns :cardsData="repoResults" :cardFilters="queryFilters" v-else></card-columns>
       <custom-footer></custom-footer>
     </div>
   </div>
@@ -79,7 +78,9 @@ import nav from "@/components/navbar.vue";
 import footer from "@/components/footer.vue";
 import cardColumnsVue from "@/components/cardColumns.vue";
 
+import "bootstrap";
 import $ from "jquery";
+import { filters } from "../storeModules/githubTypes";
 $(document).ready(function() {
   $("#sidebarCollapse").on("click", function() {
     $("#sidebar").toggleClass("active");
@@ -97,23 +98,30 @@ export default Vue.extend({
       repoQuery: "",
       repoResults: [],
       loading: false,
-      queryFilters: {}
+      queryFilters: { languages: [] },
+      languages: ["Python", "Javascript", "HTML", "CSS", "Java"]
     };
   },
   async created() {
     if (store.getters.getUserGitHubToken.length != 0) {
       this.startRepoQuery(this.repoQuery);
+    } else {
+      console.error("There was a problem getting token");
     }
   },
   methods: {
-    // Todo: move this operation into github module
     changeCardsData(newCardsData: []) {
       this.repoResults = newCardsData;
     },
-    async startRepoQuery(searchQuery: string) {
+    async startRepoQuery(searchQuery: string, cursor: string) {
       this.loading = true;
+
+      let payload = {
+        searchQuery: searchQuery,
+        cursor: cursor != null ? cursor : null
+      };
       await store
-        .dispatch("repoQueryRequest", searchQuery)
+        .dispatch("repoQueryRequest", payload)
         .then(data => {
           this.loading = false;
           if (data.data === undefined || data.data == null) {
@@ -127,6 +135,9 @@ export default Vue.extend({
           console.log(`received error ${error}`);
         });
     }
+    //     async paginateNextRepo(repoId: String) {
+    //       await this.startRepoQuery()
+    // }
   }
 });
 </script>
