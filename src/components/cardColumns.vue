@@ -2,7 +2,6 @@
   <div class="card-columns">
     <!-- Todo: have an a tag around ll of this wiht the url emebded in there as a router link || send directly to github page  -->
     <!-- Todo: make the card a type in typescript  -->
-    <!-- v-if="hasAllFilters(edge)" -->
     <div class="card" v-for="edge in cardsWithFilters" :key="edge.node.id">
       <!-- <img src="..." class="card-img-top" alt="..."> -->
       <div class="card-body">
@@ -70,7 +69,6 @@ export default Vue.extend({
     },
     hasAllFilters(cardData: any): boolean {
       let listOfNeededLanguages = this.cardFilters.languages;
-
       cardData.node.languages.nodes.forEach((language: any) => {
         if (listOfNeededLanguages.includes(language.name)) {
           listOfNeededLanguages.pop(language.name);
